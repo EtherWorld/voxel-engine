@@ -162,7 +162,7 @@ Game.prototype.addItem = function(item) {
   if (!item.tick) {
     var newItem = physical(
       item.mesh,
-      this.potentialCollisionSet(),
+      this.itemCollisionSet(),
       [item.size, item.size, item.size]
     )
     
@@ -174,7 +174,6 @@ Game.prototype.addItem = function(item) {
     newItem.repr = function() { return 'debris' }
     newItem.mesh = item.mesh
     newItem.blocksCreation = item.blocksCreation
-    
     item = newItem
   }
   
@@ -379,6 +378,11 @@ Game.prototype.potentialCollisionSet = function() {
   return [{ collide: this.collideTerrain.bind(this) }]
 }
 
+Game.prototype.itemCollisionSet = function() {
+  return [{ collide: this.collideAvatar.bind(this) }]
+}
+
+
 /**
  * Get the position of the player under control.
  * If there is no player under control, return
@@ -420,6 +424,16 @@ Game.prototype.collideTerrain = function(other, bbox, vec, resting) {
   })
 }
 
+Game.prototype.collideAvatar = function(other, bbox, vec, resting) {
+  var playerPos = aabb(this.playerPosition(), [1, 1, 1])
+  var intersects = bbox.intersects(playerPos)
+  if (intersects) {
+    this.emit('collision', other)
+  }
+  return intersects
+}
+
+
 // # Three.js specific methods
 
 Game.prototype.addStats = function() {
@@ -433,7 +447,7 @@ Game.prototype.addLights = function(scene) {
   var ambientLight, directionalLight
   ambientLight = new THREE.AmbientLight(0xcccccc)
   scene.add(ambientLight)
-  var light	= new THREE.DirectionalLight( 0xffffff , 1)
+  var light = new THREE.DirectionalLight( 0xffffff , 1)
   light.position.set( 1, 1, 0.5 ).normalize()
   scene.add( light )
 }
