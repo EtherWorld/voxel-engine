@@ -31,7 +31,8 @@
     "spatial-events": "0.0.1",
     "spatial-trigger": "0.0.0",
     "collide-3d-tilemap": "0.0.1",
-    "tic": "0.2.1"
+    "tic": "0.2.1",
+    "drag-stream": "0.0.2"
   },
   "devDependencies": {
     "tape": "0.2.2"
